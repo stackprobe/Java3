@@ -1,6 +1,6 @@
 Java codes
 ==========
 
-Java�ŏ������R�[�h�̊񂹏W�߂ł��B
+Javaで書いたコードの寄せ集めです。
 
-�ꕔ https://github.com/stackprobe/Java ���v��܂��B
+一部 https://github.com/stackprobe/Java が要ります。
