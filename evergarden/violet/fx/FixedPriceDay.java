@@ -26,7 +26,7 @@ public class FixedPriceDay {
 	public static void executeCollect() {
 		try {
 			Runtime.getRuntime().exec(
-					//////////////////////////////////////////////////// $_git:secret
+					///////////////////////////////////////////////// // $_git:secret
 					).waitFor();
 		}
 		catch(Throwable e) {
