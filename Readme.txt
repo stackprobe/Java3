@@ -3,4 +3,15 @@ Java codes
 
 Javaで書いたコードの寄せ集めです。
 
-一部 https://github.com/stackprobe/Java が要ります。
+
+----
+開発環境
+
+Windows 7 Home Premium
+Java 1.8.0_92
+
+
+----
+必要なソース
+
+https://github.com/stackprobe/Java
