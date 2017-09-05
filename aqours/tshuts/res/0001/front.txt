@@ -1,0 +1,18 @@
+uint ModPow(uint v, uint e, uint m) {
+    uint64 r;
+
+    if(!e)
+        return 1;
+
+    r = ModPow(v, e / 2, m);
+    r *= r;
+    r %= m;
+
+    if(e & 1) {
+        r *= v;
+        r %= m;
+    }
+    return r;
+}
+
+uint16 CRnd16(void);
