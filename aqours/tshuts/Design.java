@@ -1,21 +1,29 @@
 package aqours.tshuts;
 
+import java.util.List;
+
+import charlotte.tools.FileTools;
+import charlotte.tools.RunnableEx;
+import charlotte.tools.StringTools;
+import charlotte.tools.WorkDir;
+
 public class Design {
-	public static void main(String[] args) {
+	private List<String> _lines;
+
+	public Design(String relPath) {
 		try {
-			main2();
+			try(WorkDir wd = new WorkDir()) {
+				String file = wd.makeSubPath();
+				FileTools.writeAllBytes(file, FileTools.readToEnd(Design.class.getResource(relPath)));
+				_lines = FileTools.readAllLines(file, StringTools.CHARSET_ASCII);
+			}
 		}
 		catch(Throwable e) {
-			e.printStackTrace();
+			throw RunnableEx.re(e);
 		}
 	}
 
-	private static void main2() {
-		new Design().perform("res/0001/front.txt");
-		new Design().perform("res/0001/ushiro.txt");
-	}
-
-	private void perform(String resPath) {
+	public void perform() {
 		// TODO
 	}
 }
