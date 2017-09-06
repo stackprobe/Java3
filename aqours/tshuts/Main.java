@@ -13,7 +13,7 @@ public class Main {
 		System.exit(0);
 	}
 
-	private static void main2() {
+	private static void main2() throws Exception {
 		String[] relPaths = new String[]
 				{ "res/0001/front.txt", "res/0001/ushiro.txt" };
 

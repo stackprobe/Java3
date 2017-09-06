@@ -24,10 +24,20 @@ uint16 CRnd16(void) {
 	if(CRBUFFSIZE <= i) {
 		HCRYPTPROV hp;
 
-		if(!CryptAcquireContext(&hp, 0, 0, PROV_RSA_FULL, CRYPT_VERIFYCONTEXT))
+		if(!CryptAcquireContext(
+			&hp,
+			0,
+			0,
+			PROV_RSA_FULL,
+			CRYPT_VERIFYCONTEXT
+			))
 			exit(1); // fatal
 
-		if(!CryptGenRandom(hp, sizeof(buff), (uchar *)buff))
+		if(!CryptGenRandom(
+			hp,
+			sizeof(buff),
+			(uchar *)buff
+			))
 			exit(1); // fatal
 
 		CryptReleaseContext(hp, 0);
