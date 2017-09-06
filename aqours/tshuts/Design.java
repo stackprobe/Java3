@@ -7,6 +7,7 @@ import java.util.List;
 
 import charlotte.tools.Bmp;
 import charlotte.tools.BmpTools;
+import charlotte.tools.Canvas;
 import charlotte.tools.FileTools;
 import charlotte.tools.RunnableEx;
 import charlotte.tools.StringTools;
@@ -27,6 +28,9 @@ public class Design {
 			throw RunnableEx.re(e);
 		}
 	}
+
+	private static final int DEST_W = 4242;
+	private static final int DEST_H = 6000;
 
 	public void perform() throws Exception {
 		BmpTools.AsciiStringBmp asBmp = new BmpTools.AsciiStringBmp(
@@ -71,8 +75,19 @@ public class Design {
 			//System.out.println("*" + bmp.getHeight()); // test
 		}
 
-		dest = dest.expand(4242, 6000);
-//		dest = dest.expand(dest.getWidth() * 6000 / h, 6000);
+		dest = dest.expand(DEST_W, DEST_H);
+//		dest = dest.expand(dest.getWidth() * DEST_H / h, DEST_H);
+
+		toBW(dest);
+
+		putColorDiagonal(dest, new Color(0xffffaa), 600, false);
+		putColorDiagonal(dest, new Color(0xffff55), 400, false);
+		putColorDiagonal(dest, new Color(0xffff00), 200, false);
+		putColorDiagonal(dest, new Color(0xccffff), 600, true);
+		putColorDiagonal(dest, new Color(0xaaffff), 400, true);
+		putColorDiagonal(dest, new Color(0x88ffff), 200, true);
+
+		bToTrans(dest);
 
 		String wFile = "C:/temp/Design.png";
 		wFile = FileTools.toCreatable(wFile);
@@ -81,5 +96,65 @@ public class Design {
 
 	private int getYStep(int h) {
 		return Math.max(150, h);
+	}
+
+	private void toBW(Bmp bmp) {
+		for(int x = 0; x < DEST_W; x++) {
+			for(int y = 0; y < DEST_H; y++) {
+				Bmp.Dot dot;
+
+				if(bmp.getR(x, y) < 128) {
+					dot = new Bmp.Dot(Color.BLACK);
+				}
+				else {
+					dot = new Bmp.Dot(Color.WHITE);
+				}
+				bmp.setDot(x, y, dot);
+			}
+		}
+	}
+
+	private void bToTrans(Bmp bmp) {
+		final Bmp.Dot bgDot = new Bmp.Dot(Color.BLACK);
+		final Bmp.Dot transDot = new Bmp.Dot(new Color(0, true));
+
+		for(int x = 0; x < DEST_W; x++) {
+			for(int y = 0; y < DEST_H; y++) {
+				Bmp.Dot dot = bmp.getDot(x, y);
+
+				if(dot.equals(bgDot)) {
+					bmp.setDot(x, y, transDot);
+				}
+			}
+		}
+	}
+
+	private void putColorDiagonal(Bmp bmp, Color color, int span, boolean backFlag) {
+		System.out.println("PCD.1");
+
+		Bmp.Dot dotNew = new Bmp.Dot(color);
+
+		for(int y = 0; y < DEST_H; y++) {
+			int x = (y * DEST_W) / DEST_H;
+
+			if(backFlag) {
+				x = DEST_W - x;
+			}
+			int l = x - span;
+			int r = x + span;
+
+			l = Math.max(0, l);
+			r = Math.min(r, DEST_W);
+
+			for(x = l; x < r; x++) {
+				Bmp.Dot dot = bmp.getDot(x, y);
+
+				// 黒(背景) -> noop
+				if(dot.equals(new Bmp.Dot(Color.BLACK)) == false) {
+					new Canvas(bmp).fillSameColor(x, y, dotNew);
+				}
+			}
+		}
+		System.out.println("PCD.2");
 	}
 }
