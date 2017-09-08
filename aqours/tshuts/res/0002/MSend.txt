@@ -10,9 +10,9 @@ public void MSend(string ident, string message) {
 		int c = 0;
 
 		foreach (byte[] bMes in new byte[][] {
-			new byte[] { 0xff },
-			Encoding.UTF8.GetBytes(message.Replace("\0", "")),
-			new byte[] { 0x00 }
+		new byte[] { 0xff },
+		Encoding.UTF8.GetBytes(message.Replace("\0", "")),
+		new byte[] { 0x00 }
 		}) {
 			for (int i = 0; i / 8 < bMes.Length; i++) {
 				int n = (c + 1) % 3;
@@ -36,10 +36,8 @@ public void MSend(string ident, string message) {
 	}
 	finally {
 		foreach (Mutex hdl in hdls) {
-			try { hdl.ReleaseMutex(); }
-			catch { }
-			try { hdl.Close(); }
-			catch { }
+			try { hdl.ReleaseMutex(); } catch { }
+			try { hdl.Close(); } catch { }
 		}
 	}
 }

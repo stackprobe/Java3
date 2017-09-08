@@ -1,10 +1,13 @@
 package evergarden.violet;
 
+import charlotte.tools.StringTools;
+
 public class Test05 {
 	public static void main(String[] args) {
 		try {
 			test01();
 			test02();
+			test03();
 
 			System.out.println("OK!");
 		}
@@ -47,5 +50,11 @@ public class Test05 {
 		Bloccoly,
 		Blockoly,
 		Blocklie,
+	}
+
+	private static void test03() throws Exception {
+		String str = "ABC\0def";
+		byte[] bStr = str.getBytes(StringTools.CHARSET_UTF8);
+		System.out.println(StringTools.toHex(bStr)); // -> "41424300646566"
 	}
 }

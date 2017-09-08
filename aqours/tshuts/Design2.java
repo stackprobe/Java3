@@ -13,10 +13,10 @@ import charlotte.tools.RunnableEx;
 import charlotte.tools.StringTools;
 import charlotte.tools.WorkDir;
 
-public class Design {
+public class Design2 {
 	private List<String> _lines;
 
-	public Design(String relPath) {
+	public Design2(String relPath) {
 		try {
 			try(WorkDir wd = new WorkDir()) {
 				String file = wd.makeSubPath();
@@ -36,17 +36,21 @@ public class Design {
 		BmpTools.AsciiStringBmp asBmp = new BmpTools.AsciiStringBmp(
 				new Color(0, true),
 				Color.WHITE,
-				//"Impact", // test
-				"Consolas",
+				//"Impact",
+				//"Consolas",
 				//"Courier New",
+				"Verdana",
+				//"Arial",
+				//Font.BOLD | Font.ITALIC,
 				Font.BOLD,
+				//Font.PLAIN,
 				300,
-				600,
-				600,
+				750,
+				750,
 				-1,
 				-1,
 				1,
-				30
+				20
 				);
 
 		List<Bmp> bmps = new ArrayList<Bmp>();
@@ -58,10 +62,13 @@ public class Design {
 		int w = 0;
 		int h = 0;
 
+		int line_index = 0;
 		for(Bmp bmp : bmps) {
 			w = Math.max(w, bmp.getWidth());
-			h += getYStep(bmp.getHeight());
+			h += getYStep(bmp.getHeight(), line_index);
+			line_index++;
 		}
+
 		Bmp dest = new Bmp(
 				w,
 				h,
@@ -70,9 +77,11 @@ public class Design {
 				);
 		h = 0;
 
+		line_index = 0;
 		for(Bmp bmp : bmps) {
 			dest.paste(bmp, 0, h);
-			h += getYStep(bmp.getHeight());
+			h += getYStep(bmp.getHeight(), line_index);
+			line_index++;
 			//System.out.println("*" + bmp.getHeight()); // test
 		}
 
@@ -81,12 +90,10 @@ public class Design {
 
 		toBW(dest);
 
-		putColorDiagonal(dest, new Color(0xffffaa), 600, false);
-		putColorDiagonal(dest, new Color(0xffff55), 400, false);
-		putColorDiagonal(dest, new Color(0xffff00), 200, false);
-		putColorDiagonal(dest, new Color(0xccffff), 600, true);
-		putColorDiagonal(dest, new Color(0xaaffff), 400, true);
-		putColorDiagonal(dest, new Color(0x88ffff), 200, true);
+		putColorDiagonal(dest, new Color(0xffffc0), 800, true);
+		putColorDiagonal(dest, new Color(0xffff80), 600, true);
+		putColorDiagonal(dest, new Color(0xffff40), 400, true);
+		putColorDiagonal(dest, new Color(0xffff00), 200, true);
 
 		bToTrans(dest);
 
@@ -95,7 +102,14 @@ public class Design {
 		dest.writeToFile(wFile);
 	}
 
-	private int getYStep(int h) {
+	private int getYStep(int h, int line_index) {
+		if(line_index + 1 < _lines.size() &&
+				_lines.get(line_index).equals(_lines.get(line_index + 1)) == false &&
+				_lines.get(line_index).trim().equals("}") &&
+				_lines.get(line_index + 1).trim().equals("}")
+				) {
+			return 100;
+		}
 		return Math.max(150, h);
 	}
 

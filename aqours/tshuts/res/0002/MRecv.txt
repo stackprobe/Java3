@@ -1,7 +1,5 @@
 public delegate void MRecved_d(string message);
-
 public bool MRecvEnd;
-
 public void MRecv(string ident, MRecved_d recved) {
 	Mutex[] hdls = new Mutex[6];
 	try {
@@ -46,14 +44,12 @@ public void MRecv(string ident, MRecved_d recved) {
 			}
 			else {
 				if (bit) {
-					if (8 <= ++i) { i = 0; waitCount = 0; }
+					if (8 <= ++i) {i = 0; waitCount = 0;}
 				}
 				else {
 					i = 0;
 					Thread.Sleep(waitCount);
-
-					if (waitCount < 100)
-						waitCount++;
+					if (waitCount < 100) waitCount++;
 				}
 			}
 			c = n;
@@ -61,10 +57,8 @@ public void MRecv(string ident, MRecved_d recved) {
 	}
 	finally {
 		foreach (Mutex hdl in hdls) {
-			try { hdl.ReleaseMutex(); }
-			catch { }
-			try { hdl.Close(); }
-			catch { }
+			try { hdl.ReleaseMutex(); } catch { }
+			try { hdl.Close(); } catch { }
 		}
 	}
 }
