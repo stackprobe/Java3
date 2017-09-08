@@ -13,7 +13,7 @@ public class Main2 {
 		System.exit(0);
 	}
 
-	private static void main2() throws Exception {
+	public static void main2() throws Exception {
 		String[] relPaths = new String[]
 				{ "res/0002/MSend.txt", "res/0002/MRecv.txt" };
 

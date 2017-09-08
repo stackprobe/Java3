@@ -13,10 +13,10 @@ import charlotte.tools.RunnableEx;
 import charlotte.tools.StringTools;
 import charlotte.tools.WorkDir;
 
-public class Design {
+public class Design3 {
 	private List<String> _lines;
 
-	public Design(String relPath) {
+	public Design3(String relPath) {
 		try {
 			try(WorkDir wd = new WorkDir()) {
 				String file = wd.makeSubPath();
@@ -36,17 +36,21 @@ public class Design {
 		BmpTools.AsciiStringBmp asBmp = new BmpTools.AsciiStringBmp(
 				new Color(0, true),
 				Color.WHITE,
-				//"Impact", // test
-				"Consolas",
+				//"Impact",
+				//"Consolas",
 				//"Courier New",
+				//"Verdana",
+				"Arial",
+				//Font.BOLD | Font.ITALIC,
 				Font.BOLD,
+				//Font.PLAIN,
 				300,
-				600,
-				600,
+				750,
+				750,
 				-1,
 				-1,
 				1,
-				30
+				20
 				);
 
 		List<Bmp> bmps = new ArrayList<Bmp>();
@@ -58,10 +62,13 @@ public class Design {
 		int w = 0;
 		int h = 0;
 
+		int line_index = 0;
 		for(Bmp bmp : bmps) {
 			w = Math.max(w, bmp.getWidth());
-			h += getYStep(bmp.getHeight());
+			h += getYStep(bmp.getHeight(), line_index);
+			line_index++;
 		}
+
 		Bmp dest = new Bmp(
 				w,
 				h,
@@ -70,9 +77,11 @@ public class Design {
 				);
 		h = 0;
 
+		line_index = 0;
 		for(Bmp bmp : bmps) {
 			dest.paste(bmp, 0, h);
-			h += getYStep(bmp.getHeight());
+			h += getYStep(bmp.getHeight(), line_index);
+			line_index++;
 			//System.out.println("*" + bmp.getHeight()); // test
 		}
 
@@ -81,12 +90,14 @@ public class Design {
 
 		toBW(dest);
 
-		putColorDiagonal(dest, new Color(0xffffaa), 600, false);
-		putColorDiagonal(dest, new Color(0xffff55), 400, false);
-		putColorDiagonal(dest, new Color(0xffff00), 200, false);
-		putColorDiagonal(dest, new Color(0xccffff), 600, true);
-		putColorDiagonal(dest, new Color(0xaaffff), 400, true);
-		putColorDiagonal(dest, new Color(0x88ffff), 200, true);
+		putColorCenter(dest, new Color(0xffffe0), 1600);
+		putColorCenter(dest, new Color(0xffffc0), 1400);
+		putColorCenter(dest, new Color(0xffffa0), 1200);
+		putColorCenter(dest, new Color(0xffff80), 1000);
+		putColorCenter(dest, new Color(0xffff60), 800);
+		putColorCenter(dest, new Color(0xffff40), 600);
+		putColorCenter(dest, new Color(0xffff20), 400);
+		putColorCenter(dest, new Color(0xffff00), 200);
 
 		//bToTrans(dest);
 
@@ -95,7 +106,14 @@ public class Design {
 		dest.writeToFile(wFile);
 	}
 
-	private int getYStep(int h) {
+	private int getYStep(int h, int line_index) {
+		if(line_index + 1 < _lines.size() &&
+				_lines.get(line_index).equals(_lines.get(line_index + 1)) == false &&
+				_lines.get(line_index).trim().equals("}") &&
+				_lines.get(line_index + 1).trim().equals("}")
+				) {
+			return 100;
+		}
 		return Math.max(150, h);
 	}
 
@@ -130,17 +148,14 @@ public class Design {
 		}
 	}
 
-	private void putColorDiagonal(Bmp bmp, Color color, int span, boolean backFlag) {
-		System.out.println("PCD.1");
+	private void putColorCenter(Bmp bmp, Color color, int span) {
+		System.out.println("PCC.1");
 
 		Bmp.Dot dotNew = new Bmp.Dot(color);
 
 		for(int y = 0; y < DEST_H; y++) {
-			int x = (y * DEST_W) / DEST_H;
+			int x = DEST_W / 2;
 
-			if(backFlag) {
-				x = DEST_W - x;
-			}
 			int l = x - span;
 			int r = x + span;
 
@@ -156,6 +171,6 @@ public class Design {
 				}
 			}
 		}
-		System.out.println("PCD.2");
+		System.out.println("PCC.2");
 	}
 }

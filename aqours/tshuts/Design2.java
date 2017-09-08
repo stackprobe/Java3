@@ -95,7 +95,7 @@ public class Design2 {
 		putColorDiagonal(dest, new Color(0xffff40), 400, true);
 		putColorDiagonal(dest, new Color(0xffff00), 200, true);
 
-		bToTrans(dest);
+		//bToTrans(dest);
 
 		String wFile = "C:/temp/Design.png";
 		wFile = FileTools.toCreatable(wFile);

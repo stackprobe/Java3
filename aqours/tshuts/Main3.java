@@ -1,6 +1,6 @@
 package aqours.tshuts;
 
-public class Main {
+public class Main3 {
 	public static void main(String[] args) {
 		try {
 			main2();
@@ -15,11 +15,10 @@ public class Main {
 
 	public static void main2() throws Exception {
 		String[] relPaths = new String[]
-				{ "res/0001/front.txt", "res/0001/ushiro.txt" };
-				//{ "res/0002/MSend.txt", "res/0002/MRecv.txt" }; // test
+				{ "res/0003/NSend.txt", "res/0003/NRecv.txt" };
 
 		for(String relPath : relPaths) {
-			new Design(relPath).perform();
+			new Design3(relPath).perform();
 		}
 	}
 }

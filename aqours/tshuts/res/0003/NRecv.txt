@@ -1,0 +1,57 @@
+public delegate void NRecved_d(string message);
+public void NRecv(string ident, NRecved_d recved) {
+	using (var s = new EventWaitHandle(
+		false, EventResetMode.AutoReset, ident + "S"))
+	using (var k = new EventWaitHandle(
+		false, EventResetMode.AutoReset, ident + "K"))
+	using (var b = new EventWaitHandle(
+		false, EventResetMode.AutoReset, ident + "B"))
+	using (var r = new EventWaitHandle(
+		false, EventResetMode.AutoReset, ident + "R")) {
+		List<byte> buff = new List<byte>();
+		byte chr = 0x00;
+		bool recving = false;
+
+		// cleanup
+		k.WaitOne(0);
+		b.WaitOne(0);
+
+		for (int i = 0; ; ) {
+			s.WaitOne();
+			if (k.WaitOne(0)) break;
+			bool bit = b.WaitOne(0);
+			r.Set();
+
+			if (recving) {
+				if (bit)
+					chr |= (byte)(1 << i);
+
+				if (8 <= ++i) {
+					if (chr == 0x00) {
+						recved(Encoding.UTF8.GetString(
+							buff.ToArray()
+							));
+						buff.Clear();
+						recving = false;
+					}
+					else
+						buff.Add(chr);
+
+					i = 0;
+					chr = 0x00;
+				}
+			}
+			else
+				recving = bit;
+		}
+	}
+}
+public void NRecvEnd(string ident) {
+	using (var s = new EventWaitHandle(
+		false, EventResetMode.AutoReset, ident + "S"))
+	using (var k = new EventWaitHandle(
+		false, EventResetMode.AutoReset, ident + "K")) {
+		k.Set();
+		s.Set();
+	}
+}
