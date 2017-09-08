@@ -36,7 +36,8 @@ public class Design {
 		BmpTools.AsciiStringBmp asBmp = new BmpTools.AsciiStringBmp(
 				new Color(0, true),
 				Color.WHITE,
-				"Consolas",
+				"Impact", // test
+				//"Consolas",
 				//"Courier New",
 				Font.BOLD,
 				300,
@@ -87,7 +88,7 @@ public class Design {
 		putColorDiagonal(dest, new Color(0xaaffff), 400, true);
 		putColorDiagonal(dest, new Color(0x88ffff), 200, true);
 
-		bToTrans(dest);
+		//bToTrans(dest);
 
 		String wFile = "C:/temp/Design.png";
 		wFile = FileTools.toCreatable(wFile);

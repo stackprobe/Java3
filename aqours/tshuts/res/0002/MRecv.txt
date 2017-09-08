@@ -1,0 +1,70 @@
+public delegate void MRecved_d(string message);
+
+public bool MRecvEnd;
+
+public void MRecv(string ident, MRecved_d recved) {
+	Mutex[] hdls = new Mutex[6];
+	try {
+		for (int i = 0; i < hdls.Length; i++)
+			hdls[i] = new Mutex(false, ident + i);
+
+		hdls[0].WaitOne();
+
+		List<byte> buff = new List<byte>();
+		byte chr = 0x00;
+		int waitCount = 0;
+
+		for (int i = 0, c = 0; !this.MRecvEnd; ) {
+			int n = (c + 1) % 3;
+
+			hdls[n].WaitOne();
+			hdls[c].ReleaseMutex();
+
+			bool bit = !hdls[3 + n].WaitOne(0);
+
+			if (!bit)
+				hdls[3 + n].ReleaseMutex();
+
+			if (waitCount <= 0) {
+				if (bit)
+					chr |= (byte)(1 << (i % 8));
+
+				if (8 <= ++i) {
+					if (chr == 0x00) {
+						recved(Encoding.UTF8.GetString(
+							buff.ToArray()
+							));
+						buff.Clear();
+						waitCount = 1;
+					}
+					else
+						buff.Add(chr);
+
+					i = 0;
+					chr = 0x00;
+				}
+			}
+			else {
+				if (bit) {
+					if (8 <= ++i) { i = 0; waitCount = 0; }
+				}
+				else {
+					i = 0;
+					Thread.Sleep(waitCount);
+
+					if (waitCount < 100)
+						waitCount++;
+				}
+			}
+			c = n;
+		}
+	}
+	finally {
+		foreach (Mutex hdl in hdls) {
+			try { hdl.ReleaseMutex(); }
+			catch { }
+			try { hdl.Close(); }
+			catch { }
+		}
+	}
+}

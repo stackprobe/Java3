@@ -15,7 +15,9 @@ public class Main {
 
 	private static void main2() throws Exception {
 		String[] relPaths = new String[]
-				{ "res/0001/front.txt", "res/0001/ushiro.txt" };
+//				{ "res/0001/front.txt", "res/0001/ushiro.txt" };
+//				{ "res/0002/MSend.txt", "res/0002/MRecv.txt" }; // test
+		{ "res/0002/MRecv.txt" }; // test
 
 		for(String relPath : relPaths) {
 			new Design(relPath).perform();
