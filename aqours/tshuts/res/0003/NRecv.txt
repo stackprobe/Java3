@@ -13,7 +13,7 @@ public void NRecv(string ident, NRecved_d recved) {
 		bool recving = false;
 
 		// cleanup
-		k.WaitOne(0);
+		k.WaitOne(0); // 2bs
 		b.WaitOne(0);
 
 		for (int i = 0; ; ) {
