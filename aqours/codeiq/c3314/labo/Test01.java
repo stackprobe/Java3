@@ -1,4 +1,4 @@
-package aqours.codeiq.c3314.labos;
+package aqours.codeiq.c3314.labo;
 
 public class Test01 {
 	public static void main(String[] args) {

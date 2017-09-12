@@ -218,28 +218,88 @@ public class Main {
 		long ans = 0L;
 		int div = pws.length;
 		int[] rems = new int[div];
-		int[] maxes = new int[div];
+		int[] maxs = new int[div];
+		int[] rMaxs = new int[div];
 		int pi = 0;
 		boolean ahead = true;
+
+		int maxSum = 0;
+		for(int i = 0; i < div; i++) {
+			maxs[i] = getPyramidSize(pws[i] - 1);
+			maxSum += maxs[i];
+		}
+		if(maxSum < rem) {
+			return 0L;
+		}
+		int remRem = rem;
+
+		// このへん多分何か変 --->
 
 		for(; ; ) {
 			if(ahead) {
 				if(div <= pi) {
+					assert remRem != 0;
 					ans += searchDivided(pws, rems);
 					pi--;
 					ahead = false;
 					continue;
 				}
-				rems[pi] = 1; // TODO first val
+				rMaxs[pi] = Math.min(remRem, maxs[pi]);
+
+				int rCnt = remRem;
+				for(int i = pi + 1; i < div; i++) {
+					rCnt -= maxs[i];
+				}
+				rems[pi] = Math.max(rCnt, 0);
+
+				assert rems[pi] <= rMaxs[pi];
+				remRem -= rems[pi];
+				pi++;
 			}
 			else {
-				rems[pi]++;
+				if(pi < 0) {
+					break;
+				}
+				remRem += rems[pi];
+
+				if(rems[pi] < rMaxs[pi]) {
+					rems[pi]++;
+					remRem -= rems[pi];
+					pi++;
+					ahead = true;
+				}
+				else {
+					pi--;
+				}
 			}
+
+			// <---
 		}
+		return ans;
+	}
+
+	private int getPyramidSize(int w) {
+		if(w <= 0) {
+			return 0;
+		}
+		int ret = 1;
+
+		for(; 2 <= w; w--) {
+			ret *= w;
+		}
+		return ret;
 	}
 
 	private long searchDivided(int[] pws, int[] rems) {
-		return 0L; // TODO
+		assert pws.length != rems.length;
+
+		int div = pws.length;
+		long ans = 1L;
+
+		for(int i = 0; i < div; i++) {
+			ans *= searchJoined(pws[i], rems[i]);
+		}
+		return ans;
 	}
 
 	/**
@@ -250,6 +310,6 @@ public class Main {
 	 * @return 何通りの配置があるか
 	 */
 	private long getArrange(int[] pws, int pwTotal, int wid) {
-		return 0L; // TODO
+		return 1L; // TODO
 	}
 }
