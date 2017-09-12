@@ -36,13 +36,14 @@ public class Design {
 		BmpTools.AsciiStringBmp asBmp = new BmpTools.AsciiStringBmp(
 				new Color(0, true),
 				Color.WHITE,
+				"Verdana",
 				//"Impact", // test
-				"Consolas",
+				//"Consolas",
 				//"Courier New",
 				Font.BOLD,
 				300,
-				600,
-				600,
+				750,
+				750,
 				-1,
 				-1,
 				1,
