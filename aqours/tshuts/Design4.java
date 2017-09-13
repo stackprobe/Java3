@@ -39,9 +39,9 @@ public class Design4 {
 		BmpTools.AsciiStringBmp asBmp = new BmpTools.AsciiStringBmp(
 				new Color(0, true),
 				Color.WHITE,
-				"Arail",
+				//"Arail",
 				//"Courier New",
-				//"Consolas",
+				"Consolas",
 				Font.BOLD,
 				300,
 				750,
@@ -49,7 +49,8 @@ public class Design4 {
 				-1,
 				-1,
 				1,
-				20
+				10,
+				25
 				);
 
 		List<Bmp> bmps = new ArrayList<Bmp>();
