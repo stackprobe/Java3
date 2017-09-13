@@ -29,7 +29,8 @@ public class Design2 {
 		}
 	}
 
-	private static final int DEST_W = 4242;
+	private static final int DEST_W = 4500;
+	//private static final int DEST_W = 4242; // TMIX
 	private static final int DEST_H = 6000;
 
 	public void perform() throws Exception {

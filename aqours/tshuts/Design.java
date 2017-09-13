@@ -29,15 +29,17 @@ public class Design {
 		}
 	}
 
-	private static final int DEST_W = 4242;
+	private static final int DEST_W = 4500;
+	//private static final int DEST_W = 4242; // TMIX
 	private static final int DEST_H = 6000;
 
 	public void perform() throws Exception {
 		BmpTools.AsciiStringBmp asBmp = new BmpTools.AsciiStringBmp(
 				new Color(0, true),
 				Color.WHITE,
+				//"Arial",
 				"Verdana",
-				//"Impact", // test
+				//"Impact",
 				//"Consolas",
 				//"Courier New",
 				Font.BOLD,

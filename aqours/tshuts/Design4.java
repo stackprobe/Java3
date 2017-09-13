@@ -7,16 +7,15 @@ import java.util.List;
 
 import charlotte.tools.Bmp;
 import charlotte.tools.BmpTools;
-import charlotte.tools.Canvas;
 import charlotte.tools.FileTools;
 import charlotte.tools.RunnableEx;
 import charlotte.tools.StringTools;
 import charlotte.tools.WorkDir;
 
-public class Design3 {
+public class Design4 {
 	private List<String> _lines;
 
-	public Design3(String relPath) {
+	public Design4(String relPath) {
 		try {
 			try(WorkDir wd = new WorkDir()) {
 				String file = wd.makeSubPath();
@@ -33,18 +32,17 @@ public class Design3 {
 	//private static final int DEST_W = 4242; // TMIX
 	private static final int DEST_H = 6000;
 
+	private static final int OVERLAY_W = 5;
+	private static final int OVERLAY_H = 5;
+
 	public void perform() throws Exception {
 		BmpTools.AsciiStringBmp asBmp = new BmpTools.AsciiStringBmp(
 				new Color(0, true),
 				Color.WHITE,
-				//"Impact",
-				//"Consolas",
+				"Arail",
 				//"Courier New",
-				"Verdana",
-				//"Arial",
-				//Font.BOLD | Font.ITALIC,
+				//"Consolas",
 				Font.BOLD,
-				//Font.PLAIN,
 				300,
 				750,
 				750,
@@ -73,8 +71,7 @@ public class Design3 {
 		Bmp dest = new Bmp(
 				w,
 				h,
-				Color.BLACK
-				//new Bmp.Dot(0, 0, 0, 0)
+				new Bmp.Dot(0, 0, 0, 0)
 				);
 		h = 0;
 
@@ -84,21 +81,46 @@ public class Design3 {
 			h += getYStep(bmp.getHeight(), line_index);
 			line_index++;
 			//System.out.println("*" + bmp.getHeight()); // test
+			System.out.println("paste row " + line_index);
 		}
 
-		dest = dest.expand(DEST_W, DEST_H);
-//		dest = dest.expand(dest.getWidth() * DEST_H / h, DEST_H);
+		System.out.println("expand.1");
+		dest = dest.expand(DEST_W - (OVERLAY_W - 1), DEST_H - (OVERLAY_H - 1));
+		System.out.println("expand.2");
 
 		toBW(dest);
 
-		putColorCenter(dest, new Color(0xffffe0), 1600);
-		putColorCenter(dest, new Color(0xffffc0), 1400);
-		putColorCenter(dest, new Color(0xffffa0), 1200);
-		putColorCenter(dest, new Color(0xffff80), 1000);
-		putColorCenter(dest, new Color(0xffff60), 800);
-		putColorCenter(dest, new Color(0xffff40), 600);
-		putColorCenter(dest, new Color(0xffff20), 400);
-		putColorCenter(dest, new Color(0xffff00), 200);
+		// overlay
+		{
+			Bmp src = dest;
+
+			dest = new Bmp(DEST_W, DEST_H, new Bmp.Dot(Color.BLACK));
+
+			System.out.println("overlay.1");
+
+			for(int x = src.getWidth() - 1; 0 <= x; x--) {
+				for(int y = src.getHeight() - 1; 0 <= y; y--) {
+					if(src.getR(x, y) == 255) { // ? 白
+						for(int olx = 0; olx < OVERLAY_W; olx++) {
+							for(int oly = 0; oly < OVERLAY_H; oly++) {
+								dest.setDot(x + olx, y + oly, new Bmp.Dot(Color.WHITE));
+							}
+						}
+					}
+				}
+			}
+			// osoi...
+			/*
+			for(int olx = 0; olx < OVERLAY_W; olx++) {
+				for(int oly = 0; oly < OVERLAY_H; oly++) {
+					dest.paste(src, olx, oly);
+					System.out.println("overlay ok " + olx + ", " + oly);
+				}
+			}
+			*/
+
+			System.out.println("overlay.2");
+		}
 
 		//bToTrans(dest);
 
@@ -147,31 +169,5 @@ public class Design3 {
 				}
 			}
 		}
-	}
-
-	private void putColorCenter(Bmp bmp, Color color, int span) {
-		System.out.println("PCC.1");
-
-		Bmp.Dot dotNew = new Bmp.Dot(color);
-
-		for(int y = 0; y < DEST_H; y++) {
-			int x = DEST_W / 2;
-
-			int l = x - span;
-			int r = x + span;
-
-			l = Math.max(0, l);
-			r = Math.min(r, DEST_W);
-
-			for(x = l; x < r; x++) {
-				Bmp.Dot dot = bmp.getDot(x, y);
-
-				// 黒(背景) -> noop
-				if(dot.equals(new Bmp.Dot(Color.BLACK)) == false) {
-					new Canvas(bmp).fillSameColor(x, y, dotNew);
-				}
-			}
-		}
-		System.out.println("PCC.2");
 	}
 }
