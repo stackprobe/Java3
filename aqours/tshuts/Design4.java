@@ -28,12 +28,12 @@ public class Design4 {
 		}
 	}
 
-	private static final int DEST_W = 4500;
-	//private static final int DEST_W = 4242; // TMIX
+	//private static final int DEST_W = 4500;
+	private static final int DEST_W = 4242; // TMIX
 	private static final int DEST_H = 6000;
 
-	private static final int OVERLAY_W = 5;
-	private static final int OVERLAY_H = 5;
+	private static final int OVERLAY_W = 10;
+	private static final int OVERLAY_H = 10;
 
 	public void perform() throws Exception {
 		BmpTools.AsciiStringBmp asBmp = new BmpTools.AsciiStringBmp(
@@ -52,6 +52,8 @@ public class Design4 {
 				10,
 				25
 				);
+
+		asBmp.setSpaceWidth(30);
 
 		List<Bmp> bmps = new ArrayList<Bmp>();
 
@@ -85,17 +87,13 @@ public class Design4 {
 			System.out.println("paste row " + line_index);
 		}
 
-		System.out.println("expand.1");
-		dest = dest.expand(DEST_W - (OVERLAY_W - 1), DEST_H - (OVERLAY_H - 1));
-		System.out.println("expand.2");
-
 		toBW(dest);
 
 		// overlay
 		{
 			Bmp src = dest;
 
-			dest = new Bmp(DEST_W, DEST_H, new Bmp.Dot(Color.BLACK));
+			dest = new Bmp(w + OVERLAY_W, h + OVERLAY_H, new Bmp.Dot(Color.BLACK));
 
 			System.out.println("overlay.1");
 
@@ -123,7 +121,13 @@ public class Design4 {
 			System.out.println("overlay.2");
 		}
 
-		//bToTrans(dest);
+		System.out.println("expand.1");
+		dest = dest.expand(DEST_W, DEST_H);
+		System.out.println("expand.2");
+
+		toBW(dest);
+
+		bToTrans(dest);
 
 		String wFile = "C:/temp/Design.png";
 		wFile = FileTools.toCreatable(wFile);

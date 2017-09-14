@@ -44,7 +44,7 @@ public void MRecv(string ident, MRecved_d recved) {
 			}
 			else {
 				if (bit) {
-					if (8 <= ++i) {i = 0; waitCount = 0;}
+					if (8 <= ++i) { i = 0; waitCount = 0; }
 				}
 				else {
 					i = 0;

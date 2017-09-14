@@ -7,7 +7,6 @@ public void NSend(string ident, string message) {
 	using (var r = new EventWaitHandle(
 		false, EventResetMode.AutoReset, ident + "R")) {
 		r.WaitOne(100); // XXX cleanup
-
 		foreach (byte[] bMes in new byte[][] {
 		new byte[] { 0x00, 0x80 },
 		Encoding.UTF8.GetBytes(message.Replace("\0", "")),
