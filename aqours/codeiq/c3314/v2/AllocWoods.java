@@ -1,17 +1,15 @@
 package aqours.codeiq.c3314.v2;
 
-public class AllocWoods {
-	public interface Found {
-		public void action(int[] woods);
-	}
+import charlotte.tools.ValueSetter;
 
-	public void search(int[] islands, int wood, Found found) {
-		assert 1 <= islands.length;
-		assert 1 <= wood;
+public class AllocWoods {
+	public static void search(int[] islands, int wood, ValueSetter<int[]> found) {
+		if(islands.length < 1) throw null; // assert
+		if(wood < 1) throw null; // assert
 		for(int island : islands) {
-			assert 1 <= island;
+			if(island < 1) throw null; // assert
 		}
 
-		found.action(null); // TODO
+		//found.set(null); // TODO
 	}
 }

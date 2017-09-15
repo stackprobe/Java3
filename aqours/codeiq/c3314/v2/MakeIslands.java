@@ -1,17 +1,12 @@
 package aqours.codeiq.c3314.v2;
 
+import charlotte.tools.ValueSetter;
+
 public class MakeIslands {
-	public interface Found {
-		public void action(int[] islands);
-	}
+	public static void search(int island, int div, int rem, ValueSetter<int[]> found) {
+		if(island < 1) throw null; // assert
+		if(div < 1) throw null; // assert
 
-	public static boolean search(int island, int div, Found found) {
-		assert 1 <= island;
-		assert 1 <= div;
-
-		found.action(null); // TODO
-
-		// divが大きすぎるとき、falseを返す。
-		return false; // TODO
+		//found.set(null); // TODO
 	}
 }
