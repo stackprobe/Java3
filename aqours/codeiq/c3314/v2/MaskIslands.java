@@ -14,9 +14,9 @@ public class MaskIslands {
 	}
 
 	public void search(int div, int islandsTotalMax, Found found) throws Exception {
-		if(div < 1) throw null; // assert
-		if(islandsTotalMax < div) throw null; // assert
-		if(found == null) throw null; // assert
+		//if(div < 1) throw null; // assert
+		//if(islandsTotalMax < div) throw null; // assert
+		//if(found == null) throw null; // assert
 
 		_div = div;
 		_found = found;
@@ -35,18 +35,18 @@ public class MaskIslands {
 
 	public void search(int index, int spaceRem) throws Exception {
 		if(index < _div) {
-			if(spaceRem < 1) throw null; // assert
+			//if(spaceRem < 1) throw null; // assert
 
 			final int ISLAND_MAX = spaceRem - (_div - index - 1);
 
-			if(ISLAND_MAX < 1) throw null; // assert
+			//if(ISLAND_MAX < 1) throw null; // assert
 
 			for(_islands[index] = 1; _islands[index] <= ISLAND_MAX; _islands[index]++) {
 				search(index + 1, spaceRem - _islands[index]);
 			}
 		}
 		else {
-			if(spaceRem < 0) throw null; // assert
+			//if(spaceRem < 0) throw null; // assert
 
 			_found.action(_islands);
 		}

@@ -63,9 +63,9 @@ public class Main {
 		private long _ans;
 
 		private long action(int ground, int wood, int div) throws Exception {
-			if(ground < 1) throw null; // assert
-			if(wood < 1) throw null; // assert
-			if(div < 1) throw null; // assert
+			//if(ground < 1) throw null; // assert
+			//if(wood < 1) throw null; // assert
+			//if(div < 1) throw null; // assert
 
 			if(wood < div) {
 				return -1L;
@@ -83,39 +83,39 @@ public class Main {
 			new MaskIslands().search(div, islandsTotalMax, (islands) -> {
 				int islandsTotal = 0;
 
-				if(islands == null) throw null; // assert
-				if(islands.length != div) throw null; // assert
+				//if(islands == null) throw null; // assert
+				//if(islands.length != div) throw null; // assert
 				for(int island : islands) {
-					if(island < 1) throw null; // assert
+					//if(island < 1) throw null; // assert
 					islandsTotal += island;
 				}
-				if(islandsTotal < div) throw null; // assert
-				if(f_islandsTotalMax < islandsTotal) throw null; // assert
+				//if(islandsTotal < div) throw null; // assert
+				//if(f_islandsTotalMax < islandsTotal) throw null; // assert
 
 				int woodRem = wood - islandsTotal;
 
 				long layout = new IslandsLayout().get(ground, islands);
 				//System.out.println("layout: " + ground + ", {" + StringTools.join(", ", StringTools.toStrings(islands)) + "} -> " + layout); // test
 
-				if(layout < 1L) throw null; // assert
+				//if(layout < 1L) throw null; // assert
 
 				new AllocWoods().search(islands, woodRem, (woods) -> {
 					int woodsTotal = 0;
 
-					if(woods == null) throw null; // assert
-					if(woods.length != div) throw null; // assert
+					//if(woods == null) throw null; // assert
+					//if(woods.length != div) throw null; // assert
 					for(int w : woods) {
-						if(w < 0) throw null; // assert
+						//if(w < 0) throw null; // assert
 						woodsTotal += w;
 					}
-					if(woodsTotal != woodRem) throw null; // assert
+					//if(woodsTotal != woodRem) throw null; // assert
 
 					long currAns = 1L;
 
 					for(int index = 0; index < div; index++) {
 						long ret = search(islands[index], woods[index]);
 
-						if(ret < 1L) throw null; // assert
+						//if(ret < 1L) throw null; // assert
 
 						currAns *= ret;
 					}

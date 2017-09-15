@@ -6,10 +6,10 @@ public class IslandsLayout {
 	public long get(int ground, int[] islands) {
 		int islandsTotal = 0;
 
-		if(ground < 1) throw null; // assert
-		if(islands.length < 1) throw null; // assert
+		//if(ground < 1) throw null; // assert
+		//if(islands.length < 1) throw null; // assert
 		for(int island : islands) {
-			if(island < 1) throw null; // assert
+			//if(island < 1) throw null; // assert
 			islandsTotal += island;
 		}
 
@@ -18,7 +18,7 @@ public class IslandsLayout {
 
 		int space = ground - islandsTotal - between;
 
-		if(space < 0) throw null; // assert
+		//if(space < 0) throw null; // assert
 
 		return search(gap, space);
 	}
