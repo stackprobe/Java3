@@ -1,11 +1,264 @@
 package aqours.codeiq.c3314.v2;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
+import charlotte.tools.ArrayTools;
+import charlotte.tools.IntTools;
+import charlotte.tools.RunnableEx;
+
 public class AllocWoods {
 	public interface Found {
 		public void action(int[] woods) throws Exception;
 	}
 
-	public void search(int[] islands, int woodRem, Found found) {
-		// TODO
+	private Found _found;
+	private int _div;
+	private int[] _grounds;
+	private int[] _woodMaxs;
+	private int[] _afterTotals; // [i] == total of _woodMaxs[(i + 1) ... ]
+	private int[] _woods;
+
+	public void search(int[] islands, int wood, Found found) throws Exception {
+		if(islands == null) throw null;
+		if(islands.length < 1) throw null;
+		for(int island : islands) {
+			if(island < 1) throw null;
+		}
+		if(wood < 0) throw null;
+
+		_found = found;
+		_div = islands.length;
+		_grounds = new int[_div];
+		_woodMaxs = new int[_div];
+		_afterTotals = new int[_div];
+		_woods = new int[_div];
+
+		for(int index = 0; index < _div; index++) {
+			_grounds[index] = islands[index] - 1;
+			_woodMaxs[index] = getPylamidSize(_grounds[index]);
+		}
+
+		{
+			int total = 0;
+
+			for(int index = _div - 1; 0 <= index; index--) {
+				_afterTotals[index] = total;
+				total += _woodMaxs[index];
+			}
+
+			if(total < wood) { // ? 木が多すぎて分配不可能
+				return;
+			}
+		}
+
+		search(0, wood);
+	}
+
+	/**
+	 *
+	 * @param ground
+	 * @return ground + (ground - 1) + (ground - 2) + ... + 1
+	 */
+	private static int getPylamidSize(int ground) {
+		return (ground * (ground + 1)) / 2;
+	}
+
+	private void search(int index, int woodRem) throws Exception {
+		if(index + 1 < _div) {
+			final int WOOD_MIN = Math.max(0, woodRem - _afterTotals[index]);
+			final int WOOD_MAX = Math.min(woodRem, _woodMaxs[index]);
+
+			for(_woods[index] = WOOD_MIN; _woods[index] <= WOOD_MAX; _woods[index]++) {
+				search(index + 1, woodRem - _woods[index]);
+			}
+		}
+		else {
+			if(woodRem < 0) throw null;
+			if(_woodMaxs[index] < woodRem) throw null;
+
+			_woods[index] = woodRem;
+			_found.action(_woods);
+		}
+	}
+
+	// ---- test
+
+	public static void main(String[] args) {
+		try {
+			test01();
+
+			System.out.println("OK!");
+		}
+		catch(Throwable e) {
+			e.printStackTrace();
+		}
+		System.exit(0);
+	}
+
+	private static void test01() {
+		test01(new int[] { 1 }, 0, new int[][] {
+			new int[] { 0 },
+			});
+		test01(new int[] { 1, 2 }, 0, new int[][] {
+			new int[] { 0, 0 },
+			});
+		test01(new int[] { 1, 2, 3 }, 0, new int[][] {
+			new int[] { 0, 0, 0 },
+			});
+
+		// 配置不可能series
+		test01(new int[] { 1 }, 1, new int[][] { });
+		test01(new int[] { 1 }, 2, new int[][] { });
+		test01(new int[] { 2 }, 2, new int[][] { });
+
+		test01(new int[] { 2 }, 1, new int[][] {
+			new int[] { 1 },
+			});
+		test01(new int[] { 3 }, 1, new int[][] {
+			new int[] { 1 },
+			});
+		test01(new int[] { 3 }, 2, new int[][] {
+			new int[] { 2 },
+			});
+		test01(new int[] { 3 }, 3, new int[][] {
+			new int[] { 3 },
+			});
+		test01(new int[] { 3 }, 4, new int[][] {
+			// 配置不可能
+			});
+		test01(new int[] { 4 }, 1, new int[][] {
+			new int[] { 1 },
+			});
+		test01(new int[] { 4 }, 6, new int[][] {
+			new int[] { 6 },
+			});
+		test01(new int[] { 4 }, 7, new int[][] {
+			// 配置不可能
+			});
+
+		test01(new int[] { 2, 2 }, 2, new int[][] {
+			new int[] { 1, 1 },
+			});
+		test01(new int[] { 2, 2 }, 1, new int[][] {
+			new int[] { 0, 1 },
+			new int[] { 1, 0 },
+			});
+
+		test01(new int[] { 2, 1, 2 }, 2, new int[][] {
+			new int[] { 1, 0, 1 },
+			});
+		test01(new int[] { 2, 1, 2 }, 1, new int[][] {
+			new int[] { 0, 0, 1 },
+			new int[] { 1, 0, 0 },
+			});
+
+		test01(new int[] { 3, 3 }, 2, new int[][] {
+			new int[] { 0, 2 },
+			new int[] { 2, 0 },
+			new int[] { 1, 1 },
+			});
+		test01(new int[] { 3, 3 }, 3, new int[][] {
+			new int[] { 0, 3 },
+			new int[] { 3, 0 },
+			new int[] { 2, 1 },
+			new int[] { 1, 2 },
+			});
+		test01(new int[] { 3, 3 }, 6, new int[][] {
+			new int[] { 3, 3 },
+			});
+		test01(new int[] { 3, 3 }, 7, new int[][] {
+			// 配置不可能
+			});
+
+		test01(new int[] { 4, 4 }, 12, new int[][] {
+			new int[] { 6, 6 },
+			});
+		test01(new int[] { 4, 4 }, 13, new int[][] {
+			// 配置不可能
+			});
+		test01(new int[] { 4, 4 }, 10, new int[][] {
+			new int[] { 4, 6 },
+			new int[] { 6, 4 },
+			new int[] { 5, 5 },
+			});
+		test01(new int[] { 4, 4 }, 8, new int[][] {
+			new int[] { 2, 6 },
+			new int[] { 6, 2 },
+			new int[] { 3, 5 },
+			new int[] { 5, 3 },
+			new int[] { 4, 4 },
+			});
+
+		test01(new int[] { 3, 3, 3 }, 9, new int[][] {
+			new int[] { 3, 3, 3 },
+			});
+		test01(new int[] { 3, 3, 3 }, 10, new int[][] {
+			// 配置不可能
+			});
+		test01(new int[] { 3, 3, 3 }, 6, new int[][] {
+			new int[] { 0, 3, 3 },
+			new int[] { 3, 0, 3 },
+			new int[] { 3, 3, 0 },
+
+			new int[] { 1, 2, 3 },
+			new int[] { 1, 3, 2 },
+			new int[] { 2, 1, 3 },
+			new int[] { 3, 1, 2 },
+			new int[] { 2, 3, 1 },
+			new int[] { 3, 2, 1 },
+
+			new int[] { 2, 2, 2 },
+			});
+		test01(new int[] { 3, 3, 3 }, 3, new int[][] {
+			new int[] { 0, 0, 3 },
+			new int[] { 0, 3, 0 },
+			new int[] { 3, 0, 0 },
+
+			new int[] { 2, 0, 1 },
+			new int[] { 2, 1, 0 },
+			new int[] { 0, 2, 1 },
+			new int[] { 1, 2, 0 },
+			new int[] { 0, 1, 2 },
+			new int[] { 1, 0, 2 },
+
+			new int[] { 1, 1, 1 },
+			});
+	}
+
+	private static void test01(int[] islands, int wood, int[][] prmExpect) {
+		try {
+			List<int[]> expect = Arrays.asList(prmExpect);
+			List<int[]> answer = new ArrayList<int[]>();
+
+			new AllocWoods().search(islands, wood,
+					(woods) -> answer.add(Arrays.copyOf(woods, woods.length))
+					);
+
+			test01_sort(expect);
+			test01_sort(answer);
+
+			if(!ArrayTools.<int[]>isSame(
+					expect,
+					answer,
+					(a, b) -> ArrayTools.<Integer>comp(
+							ArrayTools.toList(a),
+							ArrayTools.toList(b),
+							(aa, bb) -> aa - bb
+							)
+					)) {
+				throw null;
+			}
+		}
+		catch(Throwable e) {
+			throw RunnableEx.re(e);
+		}
+	}
+
+	private static void test01_sort(List<int[]> list) {
+		ArrayTools.sort(list, (a, b) -> ArrayTools.<Integer>comp(
+				ArrayTools.toList(a),
+				ArrayTools.toList(b), IntTools.comp));
 	}
 }

@@ -2,6 +2,8 @@ package aqours.codeiq.c3314.v2;
 
 import java.util.Scanner;
 
+import charlotte.tools.StringTools;
+
 public class Main {
 	public static void main(String[] args) {
 		try {
@@ -28,7 +30,9 @@ public class Main {
 		long ans = 0L;
 
 		for(int island = 1; island <= wood; island++) {
-			ans += search(island, wood - island);
+			long ret = search(island, wood - island);
+			System.out.println(island + ", " + (wood - island) + " -> " + ret); // test
+			ans += ret;
 		}
 		return ans;
 	}
@@ -49,7 +53,7 @@ public class Main {
 		for(int div = 1; ; div++) {
 			long ret = new SearchGWD().action(ground, wood, div);
 
-			if(ret == 1L) {
+			if(ret == -1L) {
 				break;
 			}
 			ans += ret;
@@ -73,6 +77,9 @@ public class Main {
 			if(islandsTotalMax < div) {
 				return -1L;
 			}
+			islandsTotalMax = Math.min(islandsTotalMax, wood);
+			final int f_islandsTotalMax = islandsTotalMax;
+
 			_ans = 0L;
 
 			new MaskIslands().search(div, islandsTotalMax, (islands) -> {
@@ -85,11 +92,12 @@ public class Main {
 					islandsTotal += island;
 				}
 				if(islandsTotal < div) throw null;
-				if(islandsTotalMax < islandsTotal) throw null;
+				if(f_islandsTotalMax < islandsTotal) throw null;
 
 				int woodRem = wood - islandsTotal;
 
 				long layout = new IslandsLayout().get(ground, islands);
+				System.out.println("layout: " + ground + ", {" + StringTools.join(", ", StringTools.toStrings(islands)) + "} -> " + layout); // test
 
 				if(layout < 1L) throw null;
 
@@ -113,6 +121,7 @@ public class Main {
 
 						currAns *= ret;
 					}
+					System.out.println("layout: " + layout); // test
 					_ans += currAns * layout;
 				});
 			});

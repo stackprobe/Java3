@@ -34,6 +34,11 @@ public class MaskIslands {
 	private int[] _islands;
 
 	public void search(int index, int spaceRem) throws Exception {
+
+		// bug is here !!!!
+		// bug is here !!!!
+		// bug is here !!!!
+
 		if(spaceRem < 1) throw null; // test
 
 		if(index + 1 < _div) {
@@ -49,6 +54,10 @@ public class MaskIslands {
 			_islands[index] = spaceRem;
 			_found.action(_islands);
 		}
+
+		// bug is here !!!!
+		// bug is here !!!!
+		// bug is here !!!!
 	}
 
 	// ---- test
@@ -122,9 +131,9 @@ public class MaskIslands {
 			});
 	}
 
-	private static void test01(int div, int islandsTotalMax, int[][] prm_expect) {
+	private static void test01(int div, int islandsTotalMax, int[][] prmExpect) {
 		try {
-			List<int[]> expect = Arrays.asList(prm_expect);
+			List<int[]> expect = Arrays.asList(prmExpect);
 			List<int[]> answer = new ArrayList<int[]>();
 
 			new MaskIslands().search(div, islandsTotalMax,
