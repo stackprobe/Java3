@@ -2,8 +2,6 @@ package aqours.codeiq.c3314.v2;
 
 import java.util.Scanner;
 
-import charlotte.tools.StringTools;
-
 public class Main {
 	public static void main(String[] args) {
 		try {
@@ -31,15 +29,15 @@ public class Main {
 
 		for(int island = 1; island <= wood; island++) {
 			long ret = search(island, wood - island);
-			System.out.println(island + ", " + (wood - island) + " -> " + ret); // test
+			//System.out.println(island + ", " + (wood - island) + " -> " + ret); // test
 			ans += ret;
 		}
 		return ans;
 	}
 
 	public static long search(int island, int wood) throws Exception {
-		if(island < 1) throw null;
-		if(wood < 0) throw null;
+		if(island < 1) throw null; // assert
+		if(wood < 0) throw null; // assert
 
 		if(wood == 0) {
 			return 1L;
@@ -65,9 +63,9 @@ public class Main {
 		private long _ans;
 
 		private long action(int ground, int wood, int div) throws Exception {
-			if(ground < 1) throw null;
-			if(wood < 1) throw null;
-			if(div < 1) throw null;
+			if(ground < 1) throw null; // assert
+			if(wood < 1) throw null; // assert
+			if(div < 1) throw null; // assert
 
 			if(wood < div) {
 				return -1L;
@@ -85,43 +83,43 @@ public class Main {
 			new MaskIslands().search(div, islandsTotalMax, (islands) -> {
 				int islandsTotal = 0;
 
-				if(islands == null) throw null;
-				if(islands.length != div) throw null;
+				if(islands == null) throw null; // assert
+				if(islands.length != div) throw null; // assert
 				for(int island : islands) {
-					if(island < 1) throw null;
+					if(island < 1) throw null; // assert
 					islandsTotal += island;
 				}
-				if(islandsTotal < div) throw null;
-				if(f_islandsTotalMax < islandsTotal) throw null;
+				if(islandsTotal < div) throw null; // assert
+				if(f_islandsTotalMax < islandsTotal) throw null; // assert
 
 				int woodRem = wood - islandsTotal;
 
 				long layout = new IslandsLayout().get(ground, islands);
-				System.out.println("layout: " + ground + ", {" + StringTools.join(", ", StringTools.toStrings(islands)) + "} -> " + layout); // test
+				//System.out.println("layout: " + ground + ", {" + StringTools.join(", ", StringTools.toStrings(islands)) + "} -> " + layout); // test
 
-				if(layout < 1L) throw null;
+				if(layout < 1L) throw null; // assert
 
 				new AllocWoods().search(islands, woodRem, (woods) -> {
 					int woodsTotal = 0;
 
-					if(woods == null) throw null;
-					if(woods.length != div) throw null;
+					if(woods == null) throw null; // assert
+					if(woods.length != div) throw null; // assert
 					for(int w : woods) {
-						if(w < 0) throw null;
+						if(w < 0) throw null; // assert
 						woodsTotal += w;
 					}
-					if(woodsTotal != woodRem) throw null;
+					if(woodsTotal != woodRem) throw null; // assert
 
 					long currAns = 1L;
 
 					for(int index = 0; index < div; index++) {
 						long ret = search(islands[index], woods[index]);
 
-						if(ret < 1L) throw null;
+						if(ret < 1L) throw null; // assert
 
 						currAns *= ret;
 					}
-					System.out.println("layout: " + layout); // test
+					//System.out.println("layout: " + layout); // test
 					_ans += currAns * layout;
 				});
 			});

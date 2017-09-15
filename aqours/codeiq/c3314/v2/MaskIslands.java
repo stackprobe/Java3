@@ -14,9 +14,9 @@ public class MaskIslands {
 	}
 
 	public void search(int div, int islandsTotalMax, Found found) throws Exception {
-		if(div < 1) throw null;
-		if(islandsTotalMax < div) throw null;
-		if(found == null) throw null;
+		if(div < 1) throw null; // assert
+		if(islandsTotalMax < div) throw null; // assert
+		if(found == null) throw null; // assert
 
 		_div = div;
 		_found = found;
@@ -34,30 +34,22 @@ public class MaskIslands {
 	private int[] _islands;
 
 	public void search(int index, int spaceRem) throws Exception {
+		if(index < _div) {
+			if(spaceRem < 1) throw null; // assert
 
-		// bug is here !!!!
-		// bug is here !!!!
-		// bug is here !!!!
-
-		if(spaceRem < 1) throw null; // test
-
-		if(index + 1 < _div) {
 			final int ISLAND_MAX = spaceRem - (_div - index - 1);
 
-			if(ISLAND_MAX < 1) throw null; // test
+			if(ISLAND_MAX < 1) throw null; // assert
 
 			for(_islands[index] = 1; _islands[index] <= ISLAND_MAX; _islands[index]++) {
 				search(index + 1, spaceRem - _islands[index]);
 			}
 		}
 		else {
-			_islands[index] = spaceRem;
+			if(spaceRem < 0) throw null; // assert
+
 			_found.action(_islands);
 		}
-
-		// bug is here !!!!
-		// bug is here !!!!
-		// bug is here !!!!
 	}
 
 	// ---- test
@@ -79,9 +71,12 @@ public class MaskIslands {
 			new int[] { 1 },
 			});
 		test01(1, 2, new int[][] {
+			new int[] { 1 },
 			new int[] { 2 },
 			});
 		test01(1, 3, new int[][] {
+			new int[] { 1 },
+			new int[] { 2 },
 			new int[] { 3 },
 			});
 
@@ -89,10 +84,17 @@ public class MaskIslands {
 			new int[] { 1, 1 },
 			});
 		test01(2, 3, new int[][] {
+			new int[] { 1, 1 },
+
 			new int[] { 1, 2 },
 			new int[] { 2, 1 },
 			});
 		test01(2, 4, new int[][] {
+			new int[] { 1, 1 },
+
+			new int[] { 1, 2 },
+			new int[] { 2, 1 },
+
 			new int[] { 1, 3 },
 			new int[] { 2, 2 },
 			new int[] { 3, 1 },
@@ -102,11 +104,22 @@ public class MaskIslands {
 			new int[] { 1, 1, 1 },
 			});
 		test01(3, 4, new int[][] {
+			new int[] { 1, 1, 1 },
+
 			new int[] { 1, 1, 2 },
 			new int[] { 1, 2, 1 },
 			new int[] { 2, 1, 1 },
 			});
 		test01(3, 5, new int[][] {
+			// 3
+			new int[] { 1, 1, 1 },
+
+			// 4
+			new int[] { 1, 1, 2 },
+			new int[] { 1, 2, 1 },
+			new int[] { 2, 1, 1 },
+
+			// 5
 			new int[] { 1, 1, 3 },
 			new int[] { 1, 3, 1 },
 			new int[] { 3, 1, 1 },
@@ -116,6 +129,24 @@ public class MaskIslands {
 			new int[] { 2, 2, 1 },
 			});
 		test01(3, 6, new int[][] {
+			// 3
+			new int[] { 1, 1, 1 },
+
+			// 4
+			new int[] { 1, 1, 2 },
+			new int[] { 1, 2, 1 },
+			new int[] { 2, 1, 1 },
+
+			// 5
+			new int[] { 1, 1, 3 },
+			new int[] { 1, 3, 1 },
+			new int[] { 3, 1, 1 },
+
+			new int[] { 1, 2, 2 },
+			new int[] { 2, 1, 2 },
+			new int[] { 2, 2, 1 },
+
+			// 6
 			new int[] { 1, 1, 4 },
 			new int[] { 1, 4, 1 },
 			new int[] { 4, 1, 1 },

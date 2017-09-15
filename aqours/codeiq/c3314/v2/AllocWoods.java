@@ -21,12 +21,12 @@ public class AllocWoods {
 	private int[] _woods;
 
 	public void search(int[] islands, int wood, Found found) throws Exception {
-		if(islands == null) throw null;
-		if(islands.length < 1) throw null;
+		if(islands == null) throw null; // assert
+		if(islands.length < 1) throw null; // assert
 		for(int island : islands) {
-			if(island < 1) throw null;
+			if(island < 1) throw null; // assert
 		}
-		if(wood < 0) throw null;
+		if(wood < 0) throw null; // assert
 
 		_found = found;
 		_div = islands.length;
@@ -75,8 +75,8 @@ public class AllocWoods {
 			}
 		}
 		else {
-			if(woodRem < 0) throw null;
-			if(_woodMaxs[index] < woodRem) throw null;
+			if(woodRem < 0) throw null; // assert
+			if(_woodMaxs[index] < woodRem) throw null; // assert
 
 			_woods[index] = woodRem;
 			_found.action(_woods);
