@@ -13,7 +13,7 @@ public class Main {
 		System.exit(0);
 	}
 
-	private static void main2() {
+	private static void main2() throws Exception {
 		try(Scanner sc = new Scanner(System.in)) {
 			String line = sc.nextLine();
 			int n = Integer.parseInt(line);
@@ -24,7 +24,7 @@ public class Main {
 		}
 	}
 
-	private static long search(int wood) {
+	private static long search(int wood) throws Exception {
 		long ans = 0L;
 
 		for(int island = 1; island <= wood; island++) {
@@ -33,7 +33,7 @@ public class Main {
 		return ans;
 	}
 
-	public static long search(int island, int wood) {
+	public static long search(int island, int wood) throws Exception {
 		if(island < 1) throw null;
 		if(wood < 0) throw null;
 
@@ -60,7 +60,7 @@ public class Main {
 	public static class SearchGWD {
 		private long _ans;
 
-		private long action(int ground, int wood, int div) {
+		private long action(int ground, int wood, int div) throws Exception {
 			if(ground < 1) throw null;
 			if(wood < 1) throw null;
 			if(div < 1) throw null;
@@ -75,7 +75,7 @@ public class Main {
 			}
 			_ans = 0L;
 
-			MaskIslands.search(div, islandsTotalMax, (islands) -> {
+			new MaskIslands().search(div, islandsTotalMax, (islands) -> {
 				int islandsTotal = 0;
 
 				if(islands == null) throw null;
@@ -89,7 +89,11 @@ public class Main {
 
 				int woodRem = wood - islandsTotal;
 
-				AllocWoods.search(islands, woodRem, (woods) -> {
+				long layout = new IslandsLayout().get(ground, islands);
+
+				if(layout < 1L) throw null;
+
+				new AllocWoods().search(islands, woodRem, (woods) -> {
 					int woodsTotal = 0;
 
 					if(woods == null) throw null;
@@ -105,11 +109,11 @@ public class Main {
 					for(int index = 0; index < div; index++) {
 						long ret = search(islands[index], woods[index]);
 
-						if(ret == 0L) throw null;
+						if(ret < 1L) throw null;
 
 						currAns *= ret;
 					}
-					_ans += currAns;
+					_ans += currAns * layout;
 				});
 			});
 			return _ans;

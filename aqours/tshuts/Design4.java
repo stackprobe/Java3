@@ -126,6 +126,7 @@ public class Design4 {
 		System.out.println("expand.2");
 
 		toBW(dest);
+		antiEdge(dest);
 
 		bToTrans(dest);
 
@@ -174,5 +175,43 @@ public class Design4 {
 				}
 			}
 		}
+	}
+
+	private void antiEdge(Bmp bmp) {
+		System.out.println("antiEdge.1");
+
+		boolean conLoop;
+		do {
+			conLoop = false;
+
+			for(int x = 1; x < bmp.getWidth() - 1; x++) {
+				for(int y = 1; y < bmp.getHeight() - 1; y++) {
+					int black = 0;
+
+					if(bmp.getR(x - 1, y) == 0) black++;
+					if(bmp.getR(x + 1, y) == 0) black++;
+					if(bmp.getR(x, y - 1) == 0) black++;
+					if(bmp.getR(x, y + 1) == 0) black++;
+
+					boolean currBlack = bmp.getR(x, y) == 0;
+
+					if(black <= 1) { // ? 3 <= white
+						if(currBlack) {
+							bmp.setDot(x, y, new Bmp.Dot(Color.WHITE));
+							conLoop = true;
+						}
+					}
+					else if (3 <= black) {
+						if(!currBlack) {
+							bmp.setDot(x, y, new Bmp.Dot(Color.BLACK));
+							conLoop = true;
+						}
+					}
+				}
+			}
+		}
+		while(conLoop);
+
+		System.out.println("antiEdge.2");
 	}
 }
