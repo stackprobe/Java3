@@ -11,6 +11,7 @@ import charlotte.tools.FileTools;
 import charlotte.tools.RunnableEx;
 import charlotte.tools.StringTools;
 import charlotte.tools.WorkDir;
+import charlotte.tools.XYPoint;
 
 public class Design4 {
 	private List<String> _lines;
@@ -128,10 +129,22 @@ public class Design4 {
 		toBW(dest);
 		antiEdge(dest);
 
-		bToTrans(dest);
+		output(dest);
+
+		bwToWb(dest);
+		dest = borderRadius(dest);
+
+		output(dest);
+	}
+
+	private void output(Bmp dest) throws Exception {
+
+		//*
+		dest = bToTrans(dest);
+		//*/
 
 		String wFile = "C:/temp/Design.png";
-		wFile = FileTools.toCreatable(wFile);
+		wFile = FileTools.toCreatable(wFile, 2);
 		dest.writeToFile(wFile);
 	}
 
@@ -162,16 +175,40 @@ public class Design4 {
 		}
 	}
 
-	private void bToTrans(Bmp bmp) {
+	private Bmp bToTrans(Bmp src) {
+		Bmp dest = new Bmp(src.getWidth(), src.getHeight());
+
 		final Bmp.Dot bgDot = new Bmp.Dot(Color.BLACK);
 		final Bmp.Dot transDot = new Bmp.Dot(new Color(0, true));
 
 		for(int x = 0; x < DEST_W; x++) {
 			for(int y = 0; y < DEST_H; y++) {
-				Bmp.Dot dot = bmp.getDot(x, y);
+				Bmp.Dot dot = src.getDot(x, y);
 
 				if(dot.equals(bgDot)) {
-					bmp.setDot(x, y, transDot);
+					dest.setDot(x, y, transDot);
+				}
+				else {
+					dest.setDot(x, y, dot);
+				}
+			}
+		}
+		return dest;
+	}
+
+	private void bwToWb(Bmp bmp) {
+		final Bmp.Dot dot1 = new Bmp.Dot(Color.BLACK);
+		final Bmp.Dot dot2 = new Bmp.Dot(Color.WHITE);
+
+		for(int x = 0; x < DEST_W; x++) {
+			for(int y = 0; y < DEST_H; y++) {
+				Bmp.Dot dot = bmp.getDot(x, y);
+
+				if(dot.equals(dot1)) {
+					bmp.setDot(x, y, dot2);
+				}
+				else {
+					bmp.setDot(x, y, dot1);
 				}
 			}
 		}
@@ -213,5 +250,46 @@ public class Design4 {
 		while(conLoop);
 
 		System.out.println("antiEdge.2");
+	}
+
+	private Bmp borderRadius(Bmp bmp) {
+		final int R = 200; // rad
+		final int M = R / 3; // margin
+
+		{
+			Bmp dest = new Bmp(bmp.getWidth() + M * 2, bmp.getHeight() + M * 2, new Bmp.Dot(Color.WHITE));
+			dest.simplePaste(bmp, M, M);
+			bmp = dest;
+		}
+
+		final int W = bmp.getWidth();
+		final int H = bmp.getHeight();
+
+		borderRadius(bmp,     R,     R,     0,     0, R, R, R); // 左上
+		borderRadius(bmp, W - R,     R, W - R,     0, W, R, R); // 右上
+		borderRadius(bmp, W - R, H - R, W - R, H - R, W, H, R); // 右下
+		borderRadius(bmp,     R, H - R,     0, H - R, R, H, R); // 左下
+
+		System.out.println("expand_br.1");
+		bmp = bmp.expand(W - M * 2, H - M * 2);
+		System.out.println("expand_br.2");
+		toBW(bmp);
+		antiEdge(bmp);
+
+		return bmp;
+	}
+
+	private void borderRadius(Bmp bmp, int origX, int origY, int l, int t, int r, int b, int rad) {
+		XYPoint orig = new XYPoint(origX - 0.5, origY - 0.5);
+
+		for(int x = l; x < r; x++) {
+			for(int y = t; y < b; y++) {
+				XYPoint pt = new XYPoint(x, y);
+
+				if(rad < pt.getDistance(orig)) {
+					bmp.setDot(x, y, new Bmp.Dot(Color.BLACK));
+				}
+			}
+		}
 	}
 }
