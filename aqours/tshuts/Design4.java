@@ -129,18 +129,18 @@ public class Design4 {
 		toBW(dest);
 		antiEdge(dest);
 
-		output(dest);
+		output(dest, Color.BLACK);
 
 		bwToWb(dest);
 		dest = borderRadius(dest);
 
-		output(dest);
+		output(dest, Color.BLUE);
 	}
 
-	private void output(Bmp dest) throws Exception {
+	private void output(Bmp dest, Color backColor) throws Exception {
 
 		//*
-		dest = bToTrans(dest);
+		dest = bToTrans(dest, backColor);
 		//*/
 
 		String wFile = "C:/temp/Design.png";
@@ -175,10 +175,10 @@ public class Design4 {
 		}
 	}
 
-	private Bmp bToTrans(Bmp src) {
+	private Bmp bToTrans(Bmp src, Color backColor) {
 		Bmp dest = new Bmp(src.getWidth(), src.getHeight());
 
-		final Bmp.Dot bgDot = new Bmp.Dot(Color.BLACK);
+		final Bmp.Dot bgDot = new Bmp.Dot(backColor);
 		final Bmp.Dot transDot = new Bmp.Dot(new Color(0, true));
 
 		for(int x = 0; x < DEST_W; x++) {
@@ -256,25 +256,25 @@ public class Design4 {
 		final int R = 200; // rad
 		final int M = R / 3; // margin
 
+		final int W = bmp.getWidth();
+		final int H = bmp.getHeight();
+
 		{
-			Bmp dest = new Bmp(bmp.getWidth() + M * 2, bmp.getHeight() + M * 2, new Bmp.Dot(Color.WHITE));
+			Bmp dest = new Bmp(W + M * 2, H + M * 2, new Bmp.Dot(Color.WHITE));
 			dest.simplePaste(bmp, M, M);
 			bmp = dest;
 		}
 
-		final int W = bmp.getWidth();
-		final int H = bmp.getHeight();
+		System.out.println("expand_br.1");
+		bmp = bmp.expand(W, H);
+		System.out.println("expand_br.2");
+		toBW(bmp);
+		antiEdge(bmp);
 
 		borderRadius(bmp,     R,     R,     0,     0, R, R, R); // 左上
 		borderRadius(bmp, W - R,     R, W - R,     0, W, R, R); // 右上
 		borderRadius(bmp, W - R, H - R, W - R, H - R, W, H, R); // 右下
 		borderRadius(bmp,     R, H - R,     0, H - R, R, H, R); // 左下
-
-		System.out.println("expand_br.1");
-		bmp = bmp.expand(W - M * 2, H - M * 2);
-		System.out.println("expand_br.2");
-		toBW(bmp);
-		antiEdge(bmp);
 
 		return bmp;
 	}
@@ -287,7 +287,7 @@ public class Design4 {
 				XYPoint pt = new XYPoint(x, y);
 
 				if(rad < pt.getDistance(orig)) {
-					bmp.setDot(x, y, new Bmp.Dot(Color.BLACK));
+					bmp.setDot(x, y, new Bmp.Dot(Color.BLUE));
 				}
 			}
 		}
