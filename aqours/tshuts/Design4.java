@@ -5,13 +5,16 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
 
+import charlotte.tools.AutoTable;
 import charlotte.tools.Bmp;
 import charlotte.tools.BmpTools;
+import charlotte.tools.Canvas;
 import charlotte.tools.FileTools;
 import charlotte.tools.RunnableEx;
 import charlotte.tools.StringTools;
 import charlotte.tools.WorkDir;
 import charlotte.tools.XYPoint;
+import charlotte.tools.Xorshift;
 
 public class Design4 {
 	private List<String> _lines;
@@ -30,7 +33,8 @@ public class Design4 {
 	}
 
 	//private static final int DEST_W = 4500;
-	private static final int DEST_W = 4242; // TMIX
+	//private static final int DEST_W = 4242; // TMIX
+	private static final int DEST_W = 4250;
 	private static final int DEST_H = 6000;
 
 	private static final int OVERLAY_W = 10;
@@ -131,10 +135,18 @@ public class Design4 {
 
 		output(dest, Color.BLACK);
 
-		bwToWb(dest);
-		dest = borderRadius(dest);
+		// ----
 
-		output(dest, Color.BLUE);
+		bwToWb(dest);
+		Bmp dest_2 = borderRadius(dest);
+
+		output(dest_2, Color.BLUE);
+
+		// ----
+
+		dest_2 = borderRandomTiles(dest);
+
+		output(dest_2, Color.BLACK);
 	}
 
 	private void output(Bmp dest, Color backColor) throws Exception {
@@ -259,15 +271,15 @@ public class Design4 {
 		final int W = bmp.getWidth();
 		final int H = bmp.getHeight();
 
+		System.out.println("br.1");
+
 		{
 			Bmp dest = new Bmp(W + M * 2, H + M * 2, new Bmp.Dot(Color.WHITE));
 			dest.simplePaste(bmp, M, M);
 			bmp = dest;
 		}
 
-		System.out.println("expand_br.1");
 		bmp = bmp.expand(W, H);
-		System.out.println("expand_br.2");
 		toBW(bmp);
 		antiEdge(bmp);
 
@@ -275,6 +287,8 @@ public class Design4 {
 		borderRadius(bmp, W - R,     R, W - R,     0, W, R, R); // 右上
 		borderRadius(bmp, W - R, H - R, W - R, H - R, W, H, R); // 右下
 		borderRadius(bmp,     R, H - R,     0, H - R, R, H, R); // 左下
+
+		System.out.println("br.2");
 
 		return bmp;
 	}
@@ -290,6 +304,150 @@ public class Design4 {
 					bmp.setDot(x, y, new Bmp.Dot(Color.BLUE));
 				}
 			}
+		}
+	}
+
+	private Bmp borderRandomTiles(Bmp bmp) {
+		final int T = 25; // tile w/h size
+		final int M = 100; // margin
+
+		final int W = bmp.getWidth();
+		final int H = bmp.getHeight();
+
+		System.out.println("brt.1");
+
+		if(W % T != 0) throw null;
+		if(H % T != 0) throw null;
+
+		{
+			Bmp dest = new Bmp(W + M * 2, H + M * 2, new Bmp.Dot(Color.WHITE));
+			dest.simplePaste(bmp, M, M);
+			bmp = dest;
+		}
+
+		bmp = bmp.expand(W, H);
+		toBW(bmp);
+		antiEdge(bmp);
+
+		TileTable tt = new TileTable(bmp, W, H, T);
+		tt.tiling();
+
+		System.out.println("brt.2");
+
+		return bmp;
+	}
+
+	private class TileTable {
+		private Bmp _bmp;
+		private int _w;
+		private int _h;
+		private int _t;
+
+		private int _tw;
+		private int _th;
+		private AutoTable<Integer> _levels;
+
+		public TileTable(Bmp bmp, int w, int h, int t) {
+			_bmp = bmp;
+			_w = w;
+			_h = h;
+			_t = t;
+
+			_tw = w / t;
+			_th = h / t;
+			_levels = new AutoTable<Integer>(_tw, _th, 0);
+
+			for(int tx = 0; tx < _tw; tx++) {
+				for(int ty = 0; ty < _th; ty++) {
+					if(hasBlack(tx, ty)) {
+						_levels.set(tx, ty, 6);
+					}
+				}
+			}
+			propagate(6);
+			propagate(5);
+			propagate(4);
+			propagate(3);
+			propagate(2);
+			propagate(1);
+		}
+
+		private boolean hasBlack(int tx, int ty) {
+			for(int x = 0; x < _t; x++) {
+				for(int y = 0; y < _t; y++) {
+					if(_bmp.getR(tx * _t + x, ty * _t + y) < 128) {
+						return true;
+					}
+				}
+			}
+			return false;
+		}
+
+		private void propagate(int target) {
+			int dest = target - 1;
+
+			for(int tx = 0; tx < _tw; tx++) {
+				for(int ty = 0; ty < _th; ty++) {
+					if(_levels.get(tx, ty) == target) {
+						propagate(dest, tx - 1, ty    );
+						propagate(dest, tx + 1, ty    );
+						propagate(dest, tx,     ty - 1);
+						propagate(dest, tx,     ty + 1);
+					}
+				}
+			}
+		}
+
+		private void propagate(int dest, int tx, int ty) {
+			if(
+					tx < 0 || _tw <= tx ||
+					ty < 0 || _th <= ty ||
+					dest < _levels.get(tx, ty)
+					) {
+				return;
+			}
+			_levels.set(tx, ty, dest);
+		}
+
+		public void tiling() {
+			for(int tx = 0; tx < _tw; tx++) {
+				for(int ty = 0; ty < _th; ty++) {
+					tiling(tx, ty);
+				}
+			}
+		}
+
+		private Xorshift _xSft = new Xorshift(1, 0, 0, 0, 100);
+
+		private void tiling(int tx, int ty) {
+			int level = _levels.get(tx, ty);
+			int pct = 0;
+
+			switch(level) {
+			//case 6:
+			//case 5:
+			//case 4:
+			/*
+			case 3: pct = 25; break;
+			case 2: pct = 50; break;
+			case 1: pct = 75; break;
+			case 0: pct = 100; break;
+			*/
+			case 3: pct = 7; break;
+			case 2: pct = 22; break;
+			case 1: pct = 66; break;
+			case 0: pct = 100; break;
+			}
+
+			int r = _xSft.nextInt(100);
+
+			if(r < pct) {
+				drawTile(tx, ty, Color.BLACK);
+			}
+		}
+
+		private void drawTile(int tx, int ty, Color color) {
+			new Canvas(_bmp).fillRect(tx * _t, ty * _t, _t, _t, color);
 		}
 	}
 }
