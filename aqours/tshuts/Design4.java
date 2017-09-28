@@ -347,6 +347,8 @@ public class Design4 {
 		private int _th;
 		private AutoTable<Integer> _levels;
 
+		private final Color TILE_COLOR = Color.BLUE;
+
 		public TileTable(Bmp bmp, int w, int h, int t) {
 			_bmp = bmp;
 			_w = w;
@@ -415,6 +417,21 @@ public class Design4 {
 					tiling(tx, ty);
 				}
 			}
+			for(int x = 0; x < _w; x++) {
+				tryFillExteriorTiles(x, 0);
+				tryFillExteriorTiles(x, _h - 1);
+			}
+			for(int y = 0; y < _h; y++) {
+				tryFillExteriorTiles(0, y);
+				tryFillExteriorTiles(_w - 1, y);
+			}
+			for(int x = 0; x < _w; x++) {
+				for(int y = 0; y < _h; y++) {
+					if(_bmp.getDot(x, y).equals(new Bmp.Dot(TILE_COLOR))) {
+						_bmp.setDot(x, y, new Bmp.Dot(Color.WHITE));
+					}
+				}
+			}
 		}
 
 		private Xorshift _xSft = new Xorshift(1, 0, 0, 0, 100);
@@ -427,27 +444,33 @@ public class Design4 {
 			//case 6:
 			//case 5:
 			//case 4:
-			/*
 			case 3: pct = 25; break;
 			case 2: pct = 50; break;
 			case 1: pct = 75; break;
 			case 0: pct = 100; break;
-			*/
+			/*
 			case 3: pct = 7; break;
 			case 2: pct = 22; break;
 			case 1: pct = 66; break;
 			case 0: pct = 100; break;
+			*/
 			}
 
 			int r = _xSft.nextInt(100);
 
 			if(r < pct) {
-				drawTile(tx, ty, Color.BLACK);
+				drawTile(tx, ty, TILE_COLOR);
 			}
 		}
 
 		private void drawTile(int tx, int ty, Color color) {
 			new Canvas(_bmp).fillRect(tx * _t, ty * _t, _t, _t, color);
+		}
+
+		private void tryFillExteriorTiles(int x, int y) {
+			if(_bmp.getDot(x, y).equals(new Bmp.Dot(TILE_COLOR))) {
+				new Canvas(_bmp).fillSameColor(x, y, Color.BLACK);
+			}
 		}
 	}
 }
