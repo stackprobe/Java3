@@ -1,10 +1,12 @@
 package aqours.violet;
 
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import charlotte.tools.ArrayTools;
-import charlotte.tools.FileTools;
 import charlotte.tools.IntTools;
 import charlotte.tools.StringTools;
 
@@ -26,7 +28,7 @@ public class XorPylamidTop {
 
 		lines.add("1(1)0");
 
-		for(int h = 2; h <= 20000; h++) {
+		for(int h = 2; h <= 65540; h++) {
 			int size = top.size();
 
 			for(int a = 1; a <= 2; a++) {
@@ -39,7 +41,13 @@ public class XorPylamidTop {
 
 			lines.add(h + "(" + top.size() + ")" + StringTools.join(":", StringTools.toStrings(IntTools.toInts(top))));
 		}
-		FileTools.writeAllLines("C:/temp/XorPylamidTop.txt", lines, StringTools.CHARSET_SJIS);
+		//FileTools.writeAllLines("C:/temp/XorPylamidTop.txt", lines, StringTools.CHARSET_SJIS); // メモリ不足で落ちる。
+		try(OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream("C:/temp/XorPylamidTop.txt")), StringTools.CHARSET_SJIS)) {
+			for(String line : lines) {
+				writer.write(line);
+				writer.write("\r\n");
+			}
+		}
 	}
 
 	private void erasePairs(List<Integer> vals) {
