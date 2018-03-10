@@ -42,7 +42,10 @@ public class XorPylamidTop {
 			lines.add(h + "(" + top.size() + ")" + StringTools.join(":", StringTools.toStrings(IntTools.toInts(top))));
 		}
 		//FileTools.writeAllLines("C:/temp/XorPylamidTop.txt", lines, StringTools.CHARSET_SJIS); // メモリ不足で落ちる。
-		try(OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream("C:/temp/XorPylamidTop.txt")), StringTools.CHARSET_SJIS)) {
+		try(FileOutputStream fos = new FileOutputStream("C:/temp/XorPylamidTop.txt");
+				BufferedOutputStream bos = new BufferedOutputStream(fos);
+				OutputStreamWriter writer = new OutputStreamWriter(bos, StringTools.CHARSET_SJIS);
+				) {
 			for(String line : lines) {
 				writer.write(line);
 				writer.write("\r\n");
