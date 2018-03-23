@@ -84,7 +84,7 @@ public class ChartFile {
 	}
 
 	public PriceData getPrice(long sec) {
-		SubList<PriceData> ret = _prices.getMatchWithEdge(PriceData.ferret(sec));
+		SubList<PriceData> ret = _prices.getMatchWithEdge(PriceData.target(sec));
 
 		if(ret.size() == 3) {
 			return ret.get(1);

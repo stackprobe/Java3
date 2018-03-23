@@ -39,7 +39,7 @@ public class PriceData {
 		}
 	};
 
-	public static PriceData ferret(long sec) {
+	public static PriceData target(long sec) {
 		return new PriceData(sec, DEF_PRICE, DEF_PRICE);
 	}
 
