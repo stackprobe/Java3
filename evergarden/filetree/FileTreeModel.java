@@ -3,6 +3,7 @@ package evergarden.filetree;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
@@ -10,6 +11,7 @@ import javax.swing.tree.TreePath;
 
 import charlotte.tools.ArrayTools;
 import charlotte.tools.FileTools;
+import charlotte.tools.MapTools;
 import charlotte.tools.StringTools;
 
 public class FileTreeModel implements TreeModel {
@@ -49,8 +51,23 @@ public class FileTreeModel implements TreeModel {
 		return _root;
 	}
 
+	private Map<String, List<Node>> _gcCache = MapTools.<List<Node>>createIgnoreCase();
+
 	private List<Node> getChildren(Object parent) {
 		String dir = ((Node)parent).path;
+		//System.out.println("dir.1: " + dir); // test
+		List<Node> nodes = _gcCache.get(dir);
+
+		if(nodes == null) {
+			nodes = getChildren_main(parent);
+			_gcCache.put(dir, nodes);
+		}
+		return nodes;
+	}
+
+	private List<Node> getChildren_main(Object parent) {
+		String dir = ((Node)parent).path;
+		//System.out.println("dir.2: " + dir); // test
 		List<String> paths;
 		try {
 			paths = FileTools.ls(dir);
