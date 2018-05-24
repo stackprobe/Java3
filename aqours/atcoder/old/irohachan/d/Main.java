@@ -1,4 +1,4 @@
-package aqours.atcoder.irohachan.d;
+package aqours.atcoder.old.irohachan.d;
 
 import java.util.ArrayList;
 import java.util.List;
