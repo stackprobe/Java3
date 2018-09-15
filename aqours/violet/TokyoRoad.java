@@ -15,7 +15,8 @@ public class TokyoRoad {
 	public static void main(String[] args) {
 		try {
 			//new TokyoRoad().main2();
-			new TokyoRoad().main3();
+			//new TokyoRoad().main3();
+			new TokyoRoad().main3b();
 
 			System.out.println("OK!");
 		}
@@ -67,6 +68,7 @@ public class TokyoRoad {
 					System.out.println("file: " + file);
 
 					if(FileTools.isFile(file) &&
+							file.toLowerCase().endsWith("fmdid18-0701.xml") == false &&
 							file.toLowerCase().endsWith(".xml") &&
 							FileTools.getFileSize(file) < 200000000 // < 200 MB
 							) {
@@ -87,6 +89,48 @@ public class TokyoRoad {
 						System.out.println("*2");
 					}
 				}
+			}
+		}
+
+		String wFile = "C:/temp/ALL_XStruct.txt";
+
+		try(HugeQueue lines = xSt.toLines();
+				OutputStreamWriter writer = new OutputStreamWriter(new BufferedOutputStream(new FileOutputStream(wFile)), StringTools.CHARSET_SJIS)
+				) {
+			while(1L <= lines.size()) {
+				writer.write(lines.pollString() + "\r\n");
+			}
+		}
+
+		System.gc();
+	}
+
+	private void main3b() throws Exception {
+		XStruct xSt = new XStruct();
+
+		for(String file : FileTools.lss("C:/wb/東京都地図")) {
+			System.out.println("file: " + file);
+
+			if(FileTools.isFile(file) &&
+					FileTools.getLocal(file).toUpperCase().startsWith("FG-GML-") &&
+					file.toLowerCase().endsWith(".xml") &&
+					FileTools.getFileSize(file) < 200000000 // < 200 MB
+					) {
+				System.out.println("*0");
+				XNode root = XNode.load(file);
+
+				{
+					WNode wRoot = WNode.create(root);
+
+					for(WNode wSubNode : wRoot.children) {
+						wSubNode.name = "_SubRoot";
+					}
+					root = wRoot.getXNode();
+				}
+
+				System.out.println("*1");
+				xSt.add(root);
+				System.out.println("*2");
 			}
 		}
 
