@@ -128,9 +128,13 @@ public class TokyoRoad {
 					root = wRoot.getXNode();
 				}
 
+				System.gc();
+
 				System.out.println("*1");
 				xSt.add(root);
 				System.out.println("*2");
+
+				System.gc();
 			}
 		}
 
@@ -143,7 +147,5 @@ public class TokyoRoad {
 				writer.write(lines.pollString() + "\r\n");
 			}
 		}
-
-		System.gc();
 	}
 }
