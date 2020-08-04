@@ -222,7 +222,7 @@ public class Client {
 				}
 			}
 			//sItems = MathTools.randomSubList(sItems);
-			sItems = MathTools.randomSubList(sItems, MathTools.random(3)); // FIXME
+			sItems = MathTools.randomSubList(sItems, MathTools.random(3)); // HACK
 
 			for(Item item : sItems) {
 				switch(item.status) {
